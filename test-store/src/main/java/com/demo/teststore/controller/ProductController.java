@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigInteger;
 import java.util.List;
 
-@RequestMapping("/products")
 @RestController
+@CrossOrigin
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -23,6 +24,12 @@ public class ProductController {
     @GetMapping
     public List<ProductDto> getProducts() {
         return productService.getProducts();
+    }
+
+    @GetMapping
+    @RequestMapping("/{category}")
+    public List<ProductDto> getProductsByCategory(@PathVariable("category") String category) {
+        return productService.getProducts(category);
     }
 
     @PostMapping

@@ -31,8 +31,13 @@ public class ProductService {
     }
 
     public List<ProductDto> getProducts() {
-        return productRepository.findAll()
-                .parallelStream()
+        return productRepository.findAll().parallelStream()
+                .map(this::fromDocument)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductDto> getProducts(String category) {
+        return productRepository.findByCategory(category).parallelStream()
                 .map(this::fromDocument)
                 .collect(Collectors.toList());
     }
@@ -57,7 +62,7 @@ public class ProductService {
         ProductDto dto = new ProductDto();
         dto.setId(product.getId());
         dto.setName(product.getName());
-        dto.setImageInBase64(product.getImageBase64());
+        dto.setImageBase64(product.getImageBase64());
         dto.setPrice(product.getPrice());
         return dto;
     }

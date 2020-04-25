@@ -11,5 +11,5 @@ public class ProductDto {
     private BigInteger id;
     private String name;
     private BigDecimal price;
-    private String imageInBase64;
+    private String imageBase64;
 }

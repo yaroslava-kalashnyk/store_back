@@ -16,4 +16,5 @@ public class Product {
     private String name;
     private BigDecimal price;
     private String imageBase64;
+    private String category;
 }
