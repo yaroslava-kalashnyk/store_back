@@ -1,13 +1,12 @@
 package com.demo.teststore.controller;
 
 import com.demo.teststore.dto.CreateProductDto;
-import com.demo.teststore.dto.ProductDto;
+import com.demo.teststore.dto.ProductsDto;
 import com.demo.teststore.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
-import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -22,14 +21,17 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductDto> getProducts() {
-        return productService.getProducts();
+    public ProductsDto getProducts(@RequestParam(defaultValue="0") int page,
+                                   @RequestParam(defaultValue = "10") int size) {
+        return productService.getProducts(page, size);
     }
 
     @GetMapping
     @RequestMapping("/{category}")
-    public List<ProductDto> getProductsByCategory(@PathVariable("category") String category) {
-        return productService.getProducts(category);
+    public ProductsDto getProductsByCategory(@PathVariable("category") String category,
+                                                  @RequestParam(defaultValue="0") int page,
+                                                  @RequestParam int size) {
+        return productService.getProducts(category, page, size);
     }
 
     @PostMapping

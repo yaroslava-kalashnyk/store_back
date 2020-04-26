@@ -3,12 +3,14 @@ package com.demo.teststore.service;
 import com.demo.teststore.document.Product;
 import com.demo.teststore.dto.CreateProductDto;
 import com.demo.teststore.dto.ProductDto;
+import com.demo.teststore.dto.ProductsDto;
 import com.demo.teststore.repository.ProductRepository;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +19,7 @@ import java.math.BigInteger;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ProductService {
@@ -30,16 +33,22 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductDto> getProducts() {
-        return productRepository.findAll().parallelStream()
+    public ProductsDto getProducts(int page, int size) {
+        List<ProductDto> productDtoList = StreamSupport.stream(productRepository.findAll(PageRequest.of(page, size))
+                .spliterator(), true)
                 .map(this::fromDocument)
                 .collect(Collectors.toList());
+        long totalAmount = productRepository.count();
+        return new ProductsDto(productDtoList, totalAmount);
     }
 
-    public List<ProductDto> getProducts(String category) {
-        return productRepository.findByCategory(category).parallelStream()
+    public ProductsDto getProducts(String category, int page, int size) {
+        List<ProductDto> productDtoList = productRepository.findByCategory(category, PageRequest.of(page, size))
+                .parallelStream()
                 .map(this::fromDocument)
                 .collect(Collectors.toList());
+        long totalAmount = productRepository.countByCategory(category);
+        return new ProductsDto(productDtoList, totalAmount);
     }
 
     public void saveProduct(CreateProductDto createProductDto) {
