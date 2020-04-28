@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class ProductsDto {
+public class ProductListDto {
     private List<ProductDto> productList;
     private long totalAmount;
 }

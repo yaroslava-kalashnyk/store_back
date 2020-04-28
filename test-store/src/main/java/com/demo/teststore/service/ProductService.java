@@ -3,7 +3,7 @@ package com.demo.teststore.service;
 import com.demo.teststore.document.Product;
 import com.demo.teststore.dto.CreateProductDto;
 import com.demo.teststore.dto.ProductDto;
-import com.demo.teststore.dto.ProductsDto;
+import com.demo.teststore.dto.ProductListDto;
 import com.demo.teststore.repository.ProductRepository;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -33,22 +33,22 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductsDto getProducts(int page, int size) {
+    public ProductListDto getProducts(int page, int size) {
         List<ProductDto> productDtoList = StreamSupport.stream(productRepository.findAll(PageRequest.of(page, size))
                 .spliterator(), true)
                 .map(this::fromDocument)
                 .collect(Collectors.toList());
         long totalAmount = productRepository.count();
-        return new ProductsDto(productDtoList, totalAmount);
+        return new ProductListDto(productDtoList, totalAmount);
     }
 
-    public ProductsDto getProducts(String category, int page, int size) {
+    public ProductListDto getProducts(String category, int page, int size) {
         List<ProductDto> productDtoList = productRepository.findByCategory(category, PageRequest.of(page, size))
                 .parallelStream()
                 .map(this::fromDocument)
                 .collect(Collectors.toList());
         long totalAmount = productRepository.countByCategory(category);
-        return new ProductsDto(productDtoList, totalAmount);
+        return new ProductListDto(productDtoList, totalAmount);
     }
 
     public void saveProduct(CreateProductDto createProductDto) {
@@ -81,6 +81,7 @@ public class ProductService {
         product.setName(dto.getName());
         product.setImageBase64(multiPartFileToBase64(dto.getImage()));
         product.setPrice(dto.getPrice());
+        product.setCategory(dto.getCategory());
         return product;
     }
 
